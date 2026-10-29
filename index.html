@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GRWM 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dccbf8;--bg2:#fbcfe6;--panel:#efe3ff;--ink:#3a1866;--line:#6a3fa6;--pink:#ff7eb6;--pinkS:#ffd0e8;--pinkL:#e0488f;--acc:#7b4cd4;--lav:#cdb5f7;--soft:#fbf5ff;--card:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:"Cairo",system-ui,sans-serif;color:var(--ink);background:linear-gradient(170deg,var(--bg),var(--bg2));background-attachment:fixed;min-height:100vh}
+.app{max-width:1000px;margin:14px auto;padding:14px;background:var(--panel);border:4px solid var(--line);border-radius:18px;box-shadow:0 6px 0 var(--line),inset 0 0 0 4px var(--soft)}
+.hd{display:flex;justify-content:center;padding:4px 0 12px}.hd img{height:96px;max-width:85%;object-fit:contain}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tab,.chip,.btn,.arr{font:inherit;font-weight:700;color:var(--ink);cursor:pointer;border:2px solid var(--line);border-radius:10px;box-shadow:0 3px 0 var(--line);background:var(--lav);padding:6px 14px}
+.tab.t1{background:var(--pinkS);border-color:var(--pinkL);box-shadow:0 3px 0 var(--pinkL)}
+.tab[aria-selected=true]{background:var(--acc);color:#fff;border-color:var(--ink);box-shadow:0 3px 0 var(--ink)}
+.btn{background:var(--acc);color:#fff;font-size:17px;padding:7px 22px;margin-inline-start:auto}
+.tab:focus-visible,.chip:focus-visible,.btn:focus-visible,.arr:focus-visible,input:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.tab:active,.chip:active,.btn:active,.arr:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.grid{display:grid;gap:14px;margin-top:16px}
+.win{background:var(--soft);border:3px solid var(--line);border-radius:12px;padding:12px}
+.photo{order:2}.optw{order:1}.tipw{order:3}
+@media(min-width:860px){.grid{grid-template-columns:340px 1fr}.photo{grid-column:1;grid-row:1/3;order:0}.optw{grid-column:2;grid-row:1;order:0}.tipw{grid-column:2;grid-row:2;order:0}}
+.frame{aspect-ratio:3/4;background:var(--lav);border:3px solid var(--line);border-radius:12px;box-shadow:inset 0 0 0 5px var(--soft);overflow:hidden;position:relative;touch-action:pan-y}
+.frame img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block}
+.empty{position:absolute;inset:0;display:grid;place-content:center;gap:8px;text-align:center;padding:22px;font-weight:700;line-height:1.8}
+.nav{display:flex;justify-content:center;align-items:center;gap:14px;margin:12px 0;direction:ltr}
+.arr{width:48px;height:42px;font-size:22px;padding:0}.arr:disabled{opacity:.4;cursor:default}
+.cnt{font-weight:900;min-width:64px;text-align:center}
+.stat{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:6px 12px;margin-top:8px;font-weight:700;gap:10px}
+.stat b{color:var(--acc);font-weight:900}
+.stat input{border:0;background:none;font:inherit;font-weight:700;text-align:end;width:60%;color:var(--ink)}
+.ttl{margin:12px 0 2px;font-size:18px;font-weight:900}.dsc{margin:0;font-size:14px;line-height:1.7}
+.field{margin-bottom:14px}.field h3{margin:0 0 7px;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card);display:inline-flex;align-items:center;gap:7px;padding:5px 12px}
+.chip[aria-pressed=true]{background:var(--pink);color:#3a0a28;border-color:var(--ink)}
+.chip i{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none}
+.tg{display:grid;gap:10px}
+@media(min-width:620px){.tg{grid-template-columns:1fr 1fr}}
+.tw{background:var(--card);border:2px solid var(--line);border-radius:10px;overflow:hidden}
+.tw h4{margin:0;background:var(--lav);padding:4px 10px;font-size:14px;display:flex;justify-content:space-between;border-bottom:2px solid var(--line)}
+.tw p{margin:0;padding:8px 10px;font-size:14px;line-height:1.75}
+.hnt{font-size:13px;opacity:.85;margin:0 0 8px}
+#splash{position:fixed;inset:0;z-index:100;background:#ff8fc4;display:grid;place-items:center;overflow:hidden;cursor:pointer;transition:opacity .6s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash::before{content:"";position:absolute;inset:-24px;background:url(splash.jpg) center/cover;filter:blur(18px)}
+#splash img{position:relative;height:100%;width:auto;max-width:100%;object-fit:contain;animation:sp 1s ease both}
+#splash button{position:absolute;bottom:calc(26px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font:inherit;font-weight:900;font-size:18px;color:#fff;background:#d6247f;border:3px solid #fff;border-radius:999px;padding:9px 30px;box-shadow:0 4px 0 #8a1050;cursor:pointer}
+@keyframes sp{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#splash img{animation:none}#splash{transition:none}}
+</style>
+</head>
+<body>
+<div id="splash" role="dialog" aria-label="GRWM 2"><img src="splash.jpg" alt="GRWM 2"><button id="enter" type="button">ادخلي ✨</button></div>
+<div class="app">
+  <div class="hd"><img src="logo.png" alt="GRWM 2"></div>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="grid">
+    <section class="win photo" id="photo" aria-label="صورة اللوك">
+      <div class="frame" id="fr"><img id="pic" alt="" hidden><div class="empty" id="empty"></div></div>
+      <div class="nav"><button class="arr" id="prev" type="button" aria-label="السابق">←</button><span class="cnt" id="cnt">—</span><button class="arr" id="next" type="button" aria-label="التالي">→</button></div>
+      <h2 class="ttl" id="ttl"></h2><p class="dsc" id="dsc"></p>
+      <div class="stat"><span>الستايل</span><b id="stO">—</b></div>
+      <div class="stat"><span>التطابق</span><b id="stM">—</b></div>
+      <div class="stat"><span>الاسم</span><input id="nm" placeholder="اكتبي اسمك" maxlength="20" aria-label="الاسم"></div>
+    </section>
+    <section class="win optw" aria-label="الاختيارات"><div id="opts"></div></section>
+    <section class="win tipw" aria-label="نصايح الميكاب"><h3 style="margin:0 0 4px" id="tipT">نصايح الميكاب</h3><p class="hnt">الأدوات والمنتجات اللي بتحتاجيها لتطلعي هالميكاب</p><div class="tg" id="tips"></div></section>
+  </div>
+</div>
+<script src="looks.js"></script>
+<script>
+const $=i=>document.getElementById(i);
+const SK=["فاتحة جداً","فاتحة","حنطية فاتحة","حنطية","سمراء","داكنة"],SC=["#fbe3d3","#f3cdb0","#e3b08a","#c68a60","#9a6340","#6b412b"];
+const EC=["بني","أسود","عسلي","أخضر","أزرق","رمادي"],ECC=["#5a3418","#1b1210","#a8742a","#4f8a4a","#4a7fc0","#8a98a6"];
+const HC=["أسود","بني غامق","بني فاتح","أشقر","أحمر / نحاسي","رمادي / فضي","ملوّن"],HCC=["#1b1210","#3d2314","#8a5a35","#e0c07a","#b5502c","#c9c9d1","#b06af0"];
+// [المفتاح، العنوان، الخيارات، الألوان، الوزن]
+const G1=[["skin","لون البشرة",SK,SC,2],["face","شكل الوجه",["مدور","بيضاوي","مطاول","قلب","مربع"],0,1.5],["eyec","لون العيون",EC,ECC,2],["eyes","شكل العيون",["لوزية","مدورة","غائرة","منسدلة","ضيقة"],0,2],["hair","لون الشعر",HC,HCC,1],["len","طول الشعر",["قصير","متوسط","طويل"],0,.5],["lash","الرموش",["قصيرة","متوسطة","طويلة وكثيفة"],0,1],["lips","الشفايف",["رفيعة","متوسطة","ممتلئة","عريضة"],0,1],["nose","الأنف",["مدور","مطاول","عريض","صغير"],0,1]];
+const G2=[["occ","المناسبة",["يومي","دوام / جامعة","سهرة","عرس","خطوبة / حفلة","تصوير"],0,3],["wx","الطقس",["صيف حار","شتا بارد","ربيع / خريف","ممطر"],0,1],["hol","العيد أو الموسم",["رمضان","عيد الفطر / الأضحى","رأس السنة","عيد الأم","عيد الحب","الكريسماس","هالوين"],0,2]];
+const ALL=G1.concat(G2);
+// تحويل أسماء الخيارات (نص عربي) إلى أرقام
+LOOKS.forEach(l=>{for(const k in l.tags){const f=ALL.find(x=>x[0]==k);if(!f)continue;l.tags[k]=l.tags[k].map(v=>typeof v=="string"?f[2].indexOf(v):v)}});
+const sel={};let R=[],ix=0,done=false,tab=0;
+const TABS=[["الوجه",["skin","face","nose","lips"]],["العيون",["eyec","eyes","lash"]],["الشعر",["hair","len"]],["المناسبة",["occ","wx","hol"]]];
+const FD={};ALL.forEach(f=>FD[f[0]]=f);
+function panel(){
+ $("tabs").innerHTML=TABS.map((t,i)=>`<button type="button" class="tab t${i%2}" role="tab" aria-selected="${i==tab}" data-t="${i}">${t[0]}</button>`).join("")+`<button type="button" class="btn" id="go">دوّري</button>`;
+ $("go").onclick=()=>search(true);
+ $("opts").innerHTML=TABS[tab][1].map(k=>{const f=FD[k];return `<div class="field"><h3>${f[1]}</h3><div class="chips">${f[2].map((o,i)=>`<button type="button" class="chip" aria-pressed="${sel[k]===i}" data-k="${k}" data-i="${i}">${f[3]?`<i style="background:${f[3][i]}"></i>`:""}${o}</button>`).join("")}</div></div>`}).join("")}
+document.addEventListener("click",e=>{
+ const t=e.target.closest("[data-t]");if(t){tab=+t.dataset.t;panel();return}
+ const c=e.target.closest(".chip");if(!c)return;const k=c.dataset.k,i=+c.dataset.i;
+ if(sel[k]===i)delete sel[k];else sel[k]=i;panel();if(done)search(false)});
+function score(l){let g=0,t=0;ALL.forEach(f=>{const k=f[0];if(sel[k]==null)return;t+=f[4];const a=l.tags[k];if(k=="hol"?(a&&a.includes(sel[k])):(!a||a.includes(sel[k])))g+=f[4]});return t?g/t:1}
+function search(sc){
+ const has=(l,k)=>sel[k]==null||(l.tags[k]||[]).includes(sel[k]);
+ const r=LOOKS.filter(l=>(!l.seasonal||(l.tags.hol||[]).includes(sel.hol))&&has(l,"occ")&&has(l,"hol")).map(l=>[l,score(l)]).sort((a,b)=>b[1]-a[1]);
+ let g=r.filter(x=>x[1]>=.7);if(!g.length)g=r.slice(0,3);
+ R=g;ix=0;done=true;show();if(sc)$("photo").scrollIntoView({behavior:"smooth",block:"start"})}
+function go(d){if(R.length<2)return;ix=(ix+d+R.length)%R.length;show()}
+$("prev").onclick=()=>go(-1);$("next").onclick=()=>go(1);
+let sx=null;$("fr").addEventListener("pointerdown",e=>{sx=e.clientX});
+$("fr").addEventListener("pointerup",e=>{if(sx==null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>45)go(d<0?1:-1)});
+document.addEventListener("keydown",e=>{if(e.target.tagName=="INPUT")return;if(e.key=="ArrowLeft")go(-1);if(e.key=="ArrowRight")go(1)});
+function W(t,p){return [t,p]}
+function tips(l){
+ if(l.tips)return l.tips;
+ const s=l.t+" "+l.d,LR=/(روج|شفايف|غلوس)[^،.]*/g,lipS=(s.match(LR)||[]).join(" "),eyeS=s.replace(LR," "),T=re=>re.test(s),E=re=>re.test(eyeS),L=re=>re.test(lipS),o=[];
+ if(l.seasonal){return[["الرسم","ايلاينر جل أسود أو قلم كحل ضد الماء مع فرشاة رفيعة للخطوط، وفيس بينت مائي أو ألوان مخصصة للوجه للمساحات الكبيرة."],["البشرة","أساس + كونسيلر، وبودرة شفافة (Setting powder) وبخاخ تثبيت حتى يضل الرسم طول السهرة."],["العيون","ظلال بحسب اللوك، ومسكارا أو رموش جاهزة للدراما."],["الشفايف","قلم شفايف ثم روج بنفس الدرجة، وماط للدرجات الغامقة."],["ملاحظة","استخدمي منتجات مخصصة للوجه فقط، وجرّبيها على يدك قبل. وفي الآخر شيلي الميكاب بمزيل ميكاب زيتي."]]}
+ let sk="أساس خفيف أو سكن تنت بدرجة بتطابق رقبتك، كونسيلر تحت العين وجوانب الأنف، وبودرة شفافة خفيفة بمنطقة الـ T.";
+ if(T(/مضيئ|لامع|نضر|رطب|إشراق|هايلايتر|دهبي|مشرق|جلو/))sk="أساس مضيء أو سكن تنت (Dewy) مع كونسيلر، وهايلايتر كريمي أو سائل على عظمة الخد، وبخاخ تثبيت مضيء بالآخر.";
+ if(T(/ماط/))sk="أساس ماط أو نصف ماط وبودرة شفافة للتثبيت، وهايلايتر خفيف جداً.";
+ if(T(/نمش/))sk+=" النمش: نقط صغيرة بقلم حواجب بني فاتح أو قلم نمش، وافردي بإصبعك.";
+ o.push(["البشرة 🧴",sk]);
+ let bl="بلاشر كريمي بدرجة وردي أو خوخي ناعم بالأصابع أو بفرشاة دائرية صغيرة على التفاحتين مع رفعه نحو الصدغ، وفوقه شوية بلاشر بودرة للثبات.";
+ if(T(/بلاشر/)){const w=(s.match(/بلاشر\s+(\S+)/)||[,""])[1],c=/مرجان/.test(w)?"مرجاني":/خوخ|مشمش/.test(w)?"خوخي":/وردي|روز|بيبي|باستيل/.test(w)?"وردي":"وردي خوخي";bl=`بلاشر كريمي بدرجة ${c}، طبّقيه بالأصابع أو بفرشاة دائرية صغيرة على التفاحتين ${T(/عالي/)?"وعلى عظمة الخد لفوق":"ودرّجيه لفوق ناحية الصدغ"}، وفوقه خفيف بلاشر بودرة للثبات.`}
+ else if(T(/برونز/))bl="برونزر دافئ بفرشاة كبيرة على الخدود والجبين وتحت الفك، مع بلاشر خوخي خفيف.";
+ o.push(["الخدود 🌸",bl]);
+ let ey="ظل بني أو نود مطفي على الجفن المتحرك مع كحل بني خفيف على الخط العلوي ومسكارا.";
+ if(E(/دخان|مدخ/))ey="بالتة ظلال بنية أو سودا: درجة متوسطة على الجفن والأغمق على الزاوية الخارجية، وادمجيها بفرشاة دمج ناعمة (Blending)، وقلم كحل غامق على الخط المائي.";
+ else if(E(/ظل أبيض|لمعة بيضاء|مثلج|فروستد|أبيض/))ey="ظل أبيض أو شيمر (أو كريمي لامع) على الجفن المتحرك وزاوية العين الداخلية بإصبعك أو بفرشاة مسطحة صغيرة، مع ايلاينر أسود رفيع.";
+ else if(E(/باستيل|أزرق|لافندر|بنفسجي/))ey="ظل باستيل (أزرق أو لافندر أو وردي) على كامل الجفن بفرشاة مسطحة، وادمجي الأطراف، ومسكارا سودا أو زرقا.";
+ else if(E(/عنابي|أحمر ناري|برتقالي/))ey="ظل عنابي أو أحمر مدموج بحدود ناعمة مع بني على الزاوية الخارجية، وكحل أسود قريب من الرموش.";
+ else if(E(/أخضر/))ey="ظل أخضر زيتي أو بحري على الجفن، وبني على الزاوية الخارجية، وقلم أسود أو بني ومسكارا.";
+ else if(E(/وردي/)&&E(/ظل/))ey="ظل وردي فاتح على الجفن، وبيج أو أبيض للزاوية الداخلية، وبني خفيف على الزاوية الخارجية.";
+ else if(E(/ذهبي|برونز|دافئ|بني/))ey="ظلال دافئة (برونزي أو ذهبي أو بني) مدموجة على الجفن، وفرشاة دمج للأطراف، ومسكارا.";
+ if(E(/غلتر|لمعة/)&&E(/أحمر/))ey+=" غلتر: ضعي غراء غلتر ثم الغلتر بالأصبع أو فرشاة مسطحة.";
+ if(E(/مجنّح|جناح/))ey+=" الجناح: ايلاينر سائل أو جل مع فرشاة زاوية، ارسمي الجناح باتجاه نهاية الحاجب وكبّريه بالتدريج.";
+ else if(E(/ايلاينر|خط/))ey+=" ايلاينر سائل أو قلم جل رفيع على طول الجفن.";
+ else if(E(/كحل/)&&!E(/دخان|مدخ/))ey+=" قلم كحل بني أو أسود على الخط المائي ووصّلي الزاوية.";
+ o.push(["العيون 👁",ey]);
+ o.push(["الرموش والحواجب",T(/رموش/)?"مجعّد رموش ثم مسكارا تطويل وتكثيف (أو رموش جاهزة نص أو كاملة حسب الكثافة)، ومشط الحواجب بجل حواجب وقلم بدرجة شعرك.":"مجعّد رموش ومسكارا، ومشط الحواجب بجل شفاف أو ملوّن وقلم بدرجة شعرك."]);
+ let lp="قلم شفايف نود بدرجة أغمق شوي من شفايفك مع روج أو غلوس نود.";
+ if(L(/أحمر/))lp="قلم شفايف أحمر ثم روج أحمر بنفس الدرجة"+(L(/لماع|غلوس/)?"، وغلوس شفاف على النص.":".");
+ else if(L(/عنابي|توتي/))lp="قلم شفايف عنابي أو توتي ثم روج بنفس الدرجة"+(L(/غامق/)?" (ماط).":".");
+ else if(L(/سودا|سود/))lp="قلم شفايف أسود ثم روج أسود ماط أو لماع.";
+ else if(L(/موف/))lp="قلم موف أو وردي نود ثم روج موف"+(L(/لماع|غلوس/)?" مع غلوس خفيف.":".");
+ else if(L(/بنية|بني|قهوة|كراميل/))lp="قلم شفايف بني نود ثم روج بني"+(L(/لماع|غلوس/)?" وغلوس على النص.":".");
+ else if(L(/غلوس|لماع|لامعة/))lp="قلم شفايف نود أو وردي، وغلوس شفاف أو بلون بسيط على النص ليبين الحجم.";
+ o.push(["الشفايف 💄",lp]);
+ const tl=["إسفنجة ميك أب مبلولة للأساس","فرشاة دائرية صغيرة للبلاشر","فرشاة دمج للعيون"];
+ if(E(/مجنّح|جناح|ايلاينر|مرسوم/)||T(/حواجب/))tl.push("فرشاة زاوية للايلاينر والحواجب");
+ if(E(/أبيض|باستيل|غلتر|لمعة|ظل/))tl.push("فرشاة مسطحة صغيرة للظل");
+ if(L(/أحمر|عنابي|توتي|سودا|موف/))tl.push("فرشاة شفايف");
+ o.push(["الأدوات 🖌",tl.join("، ")+". ترتيب الشغل: بشرة، حواجب، عيون، بلاشر وهايلايتر، وبعدها الشفايف."]);
+ return o}
+function show(){
+ const E=$("empty"),P=$("pic"),has=R.length>0;
+ $("stO").textContent=sel.occ!=null?FD.occ[2][sel.occ]:"كل المناسبات";
+ if(!done||!has){P.hidden=true;E.hidden=false;E.innerHTML=!done?"اختاري ملامحك ومناسبتك وبعدين اضغطي <b>دوّري</b> وبتطلعلك الصورة هون ✨":"ما في لوكات بهالمناسبة والموسم لسا. جربي تغيّري أحد الاختيارين.";$("ttl").textContent="";$("dsc").textContent="";$("cnt").textContent="—";$("stM").textContent="—";$("tips").innerHTML="";$("prev").disabled=$("next").disabled=true;return}
+ const l=R[ix][0],s=R[ix][1];
+ P.src=l.img;P.alt=l.t;P.hidden=false;E.hidden=true;
+ $("ttl").textContent=l.t;$("dsc").textContent=l.d;$("cnt").textContent=(ix+1)+" / "+R.length;$("stM").textContent=Math.round(s*100)+"٪";
+ $("prev").disabled=$("next").disabled=R.length<2;
+ const n=$("nm").value.trim();$("tipT").textContent="نصايح الميكاب"+(n?" يا "+n:"");
+ $("tips").innerHTML=tips(l).map(x=>`<div class="tw"><h4><span>${x[0]}</span><span aria-hidden="true">×</span></h4><p>${x[1]}</p></div>`).join("");
+ new Image().src=R[(ix+1)%R.length][0].img}
+$("nm").addEventListener("input",()=>{if(done&&R.length)show()});
+panel();show();
+</script>
+<script>
+(function(){const s=document.getElementById("splash");let seen=false;try{seen=sessionStorage.getItem("grwmSplash")}catch(e){}
+if(seen){s.remove();return}
+document.body.style.overflow="hidden";
+const go=()=>{if(s.classList.contains("out"))return;s.classList.add("out");document.body.style.overflow="";try{sessionStorage.setItem("grwmSplash","1")}catch(e){}setTimeout(()=>s.remove(),700)};
+s.addEventListener("click",go);setTimeout(go,3200)})();
+</script>
+</body>
+</html>
